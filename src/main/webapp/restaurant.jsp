@@ -3,6 +3,7 @@
 <%@ page import="java.util.Iterator" %>
 <%@ page import="com.iesemilidarder.restaurants.web.Restaurant" %>
  <%@ page import="com.iesemilidarder.restaurants.web.Opinion" %>
+ <%@ page import="com.iesemilidarder.restaurants.web.Users" %>
  <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!doctype html>
 <html lang="ca">
@@ -38,6 +39,30 @@
             <li class="nav-item">
                 <a class="nav-link" href="test">Enllaç 2</a>
             </li>
+            <%
+                /**
+                 *Treu el nom del usuari de la sessio i si es valid, mostrara el seu nom i un boto per fer logout
+                 */
+                Users user = (Users) session.getAttribute("user");
+
+                if(user == null){
+                    out.println(
+                            "<li class=\"nav-item\">" +
+                                    "<a class=\"nav-link\" href=\"login.jsp\">Login</a>" +
+                                    "</li>");
+
+                }else{
+                    out.println(
+                            "<li class=\"nav-item\">"
+                                    + "<a class=\"nav-link\">" + user.getCode() + "</a>" +
+                                    "</li>"+
+                                    "<li class=\"nav-item\">" +
+                                    "<a class=\"nav-link\" href='/logout'> Logout</a>" +
+                                    "</li>"
+
+                    );
+                }
+            %>
         </ul>
         <form class="form-inline my-2 my-lg-0">
             <input class="form-control mr-sm-2" type="text" name="search" placeholder="Cercar" aria-label="Cercar">
@@ -45,7 +70,6 @@
         </form>
     </div>
 </nav>
-
 <main role="main">
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
@@ -107,6 +131,49 @@
 
 
         %>
+
+
+
+        <%
+        /**
+        * Comprova si la sessio esta iniciada, treguent l'atribut del usuari i si no es null, mostrara el formulari per
+        * inserir els comentaris.
+        */
+
+        HttpSession loginSession = request.getSession(false);
+        if (session == null || loginSession.getAttribute("user") == null){
+            out.println("<h2>Inicia sessió per comentar</h2>\n");
+        }else {
+            out.println(
+                "<div class=\"form-control\">\n" +
+                "<form action=\"comment\" >\n" +
+                "<h2>Inserta el teu comentari</h2>\n" +
+                "<p> Comentari: "+
+                "<textarea class='form-control' placeholder='Introdueix el teu comentari' name='comment' rows='3'></textarea>" +
+                "<input type='hidden' name='code' value='"+rst.getCodi()+"'>"+
+
+                "</p>" +
+                "<p> Valoració:" +
+                "<select name='score'>\n" +
+                    "<option value=\"0\">0</option>\n" +
+                    "<option value=\"1\">1</option>\n" +
+                    "<option value=\"2\">2</option>\n" +
+                    "<option value=\"3\">3</option>\n" +
+                    "<option value=\"4\">4</option>\n" +
+                    "<option value=\"5\">5</option>\n" +
+                    "<option value=\"6\">6</option>\n" +
+                    "<option value=\"7\">7</option>\n" +
+                    "<option value=\"8\">8</option>\n" +
+                    "<option value=\"9\">9</option>\n" +
+                    "<option value=\"10\">10</option>\n" +
+                "</select>" +
+                "</p>" +
+                "<input type=\"submit\" value=\"Submit\">\n" +
+                "</form>\n" +
+                "</div>"
+            );
+        }
+                %>
 
 </main>
 

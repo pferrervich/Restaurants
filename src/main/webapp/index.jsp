@@ -39,9 +39,10 @@
                 <a class="nav-link" href="test">Enllaç 2</a>
             </li>
                 <%
+                    /**
+                     *Treu el nom del usuari de la sessio i si es valid, mostrara el seu nom i un boto per fer logout
+                     */
                     Users user = (Users) session.getAttribute("user");
-
-
 
                     if(user == null){
                         out.println(

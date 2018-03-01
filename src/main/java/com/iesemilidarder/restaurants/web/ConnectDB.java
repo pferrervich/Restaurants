@@ -125,9 +125,7 @@ public class ConnectDB {
                 rst.setImgurl(imgurl);
                 rst.setCodi(codi);
 
-                /**
-                 * ResultSet que executa la query a la base de dades
-                 */
+
                 ResultSet rsOpi = pstmtOpi.executeQuery();
 
                 /**
@@ -161,7 +159,15 @@ public class ConnectDB {
         return rst;
     }
 
-    public static Users readLogin(String userr, String passs) {
+
+    /**
+     * Treu les dades dels usuaris
+     * @param user parametre del usuari
+     * @param pass parametre de la contrasenya
+     * @return
+     */
+
+    public static Users readLogin(String user, String pass) {
 
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");       // Driver per a que llegeixi la base de dades
@@ -169,10 +175,22 @@ public class ConnectDB {
 
             PreparedStatement pstmtReadLogin;
 
-            pstmtReadLogin = con.prepareStatement("SELECT USU_CODI,USU_ADRECA_ELECTRONICA,USU_NOM,USU_PASSWORD FROM USUARIS WHERE USU_CODI ='" + userr + "' AND USU_PASSWORD ='" + Sha256.sha256(passs) + "'");
+            /**
+             * Query on es dona el parametre d'usuari del forulari i la contrasenya, que a la vegada la encripta amb sha256
+             */
 
+            pstmtReadLogin = con.prepareStatement("SELECT USU_CODI,USU_ADRECA_ELECTRONICA,USU_NOM,USU_PASSWORD FROM USUARIS WHERE USU_CODI ='" + user + "' AND USU_PASSWORD ='" + Sha256.sha256(pass) + "'");
+
+
+            /**
+             * ResultSet que executa la query a la base de dades
+             */
             ResultSet rs = pstmtReadLogin.executeQuery();
 
+            /**
+             * If que mentres el resultat tengui valors, assignara els valors de la base de dades als parametres.
+             * Creara un objecte a partir de Users i fara set dels parametres trets de la base de dades.
+             */
             if (rs.next()) {
 
                 String code = rs.getString("USU_CODI");
@@ -180,14 +198,14 @@ public class ConnectDB {
                 String password = rs.getString("USU_PASSWORD");
                 String email = rs.getString("USU_ADRECA_ELECTRONICA");
 
-                Users user = new Users();
+                Users usr = new Users();
 
-                user.setCode(code);
-                user.setUsers(username);
-                user.setPassword(password);
-                user.setEmail(email);
+                usr.setCode(code);
+                usr.setUsers(username);
+                usr.setPassword(password);
+                usr.setEmail(email);
 
-                return user;
+                return usr;
             }
 
         } catch (Exception e) {
@@ -195,4 +213,32 @@ public class ConnectDB {
         }
         return null;
     }
+
+
+    /**
+     * Metode per insertar els comentaris dins la base de dades. Treu els valors que se li donen al CommentServlet, i
+     * els utilitza per fer l'INSERT.
+     * @param user Nom del usuari
+     * @param comment Comentari o opinio
+     * @param score Nota que se li dona
+     * @param restCode Codi - id - del restaurant
+     * @return
+     */
+    public static Users setComment(String user, String comment, String score, String restCode){
+        try{
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+            Connection con = DriverManager.getConnection("jdbc:oracle:thin:@35.205.41.45:1521:XE", "usuari", "usuari");
+            PreparedStatement pstmtSetComment;
+            pstmtSetComment = con.prepareStatement("INSERT INTO OPINIONS (OPI_OBSERVACIO,OPI_PUNTUACIO,OPI_RES_CODI,OPI_USU_CODI,OPI_OPINIO_REVISADA) VALUES(?," + score + "," + restCode + ",'" + user + "','N')");
+            pstmtSetComment.setString(1,comment);
+            pstmtSetComment.executeUpdate();
+
+            con.close();
+
+        }catch(Exception e){
+            System.out.println(e.toString());
+        }
+        return null;
+    }
+
 }

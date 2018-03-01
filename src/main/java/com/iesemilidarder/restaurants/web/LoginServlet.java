@@ -7,15 +7,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 public class LoginServlet extends HttpServlet {
+
+    /**
+     * Estableix la sessió a partir dels parametres que se li donen al formulari de login.jsp
+     * @param req request
+     * @param resp response
+     * @throws ServletException excepcio
+     * @throws IOException excepcio
+     */
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
         resp.setContentType("text/html");
-        PrintWriter out = resp.getWriter();
 
         String user = req.getParameter("user");
         String pass = req.getParameter("password");

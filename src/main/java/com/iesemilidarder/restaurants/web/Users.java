@@ -1,10 +1,15 @@
 package com.iesemilidarder.restaurants.web;
 
+/**
+ * Atributs, getters i setters
+ */
+
 public class Users {
     private String name;
     private String password;
     private String email;
     private String code;
+
 
     public Users() {
         this.name = name;

@@ -3,6 +3,9 @@ package com.iesemilidarder.restaurants.web;
 
 import java.security.MessageDigest;
 
+/**
+ * Encripta strings en hash sha256
+ */
 
 public class Sha256 {
     public static String sha256(String base) {
